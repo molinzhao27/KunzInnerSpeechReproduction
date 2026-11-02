@@ -1,0 +1,87 @@
+# Geometry of inner vs attempted speech, T15 (Kunz et al. 2025). CPU only.
+# Regenerate everything:  python geometry/run_all.py   (outputs in geometry/results/)
+seed: 42
+participant: T15
+n_jobs: 16                 # joblib workers (one (run, region) job each)
+
+paths:
+  raw: data/raw
+  results: geometry/results
+  cache: geometry/cache     # window-mean trial features (gitignored)
+
+words: [ban, choice, day, feel, kite, though, were]
+chance: 0.142857
+
+preprocess:
+  smoothing_sigma_ms: 0     # window means already average; 0 = no smoothing
+  block_center: false       # true = the paper's block-mean subtraction (in isolated data this removes each behavior's mean)
+  # z-scoring is always per session: mean/SD of every feature over all bins of the session file,
+  # so all conditions of a session share one scale and condition gains are comparable.
+
+# Feature window, relative to each behavior's event. Fixed a priori (not tuned on these analyses):
+# 0-1500 ms after go for go-aligned behaviors, and for isolated listening the 1.5 s stimulus epoch
+# (audio plays in the "delay" epoch there; the "go" epoch is the inter-trial interval).
+window: {start_ms: 0, length_ms: 1500}
+window_sweep: [[0, 500], [500, 500], [1000, 500], [0, 1000], [0, 1500], [500, 1000]]   # [start, length] ms; decoding only
+
+sessions:
+  isolated:                 # 2024.04.07; one behavior per block
+    task: isolatedVerbalBehaviors
+    file_tag: allBehaviors
+    align: {default: go, listening: delay, reading: delay}
+    split_block: 12.5       # session split: blocks <= 12 ("early") vs >= 13 ("late"); every behavior has blocks on both sides
+  interleaved:              # 2024.06.14 (second day); three behaviors share every block
+    task: interleavedVerbalBehaviors
+    file_tag: interleavedVerbalBehaviors
+    align: {default: go}    # T15 interleaved listening plays the audio at go
+
+# Each run maps the three analysis conditions to behavior tags of one session.
+runs:
+  main:            {session: isolated,    attempted: attempted, inner: imagined1stMotor,    perceived: listening}
+  inner_auditory:  {session: isolated,    attempted: attempted, inner: imagined1stAuditory, perceived: listening}
+  inner_imaglisten: {session: isolated,   attempted: attempted, inner: imaginedListening,   perceived: listening}
+  day2_interleaved: {session: interleaved, attempted: attempted, inner: imaginedListening,  perceived: listening}
+  early_blocks:    {session: isolated,    attempted: attempted, inner: imagined1stMotor,    perceived: listening, blocks: early}
+  late_blocks:     {session: isolated,    attempted: attempted, inner: imagined1stMotor,    perceived: listening, blocks: late}
+
+# Arrays (64 electrodes each, TX + SBP = 128 features) and electrode groups.
+regions:
+  all:      {arrays: [i6v, M1, 55b, s6v], kinds: [tx, sbp]}
+  i6v:      {arrays: [i6v], kinds: [tx, sbp]}
+  M1:       {arrays: [M1], kinds: [tx, sbp]}        # paper label "T15-4" (area 4)
+  55b:      {arrays: [55b], kinds: [tx, sbp]}
+  s6v:      {arrays: [s6v], kinds: [tx, sbp]}
+  6v:       {arrays: [i6v, s6v], kinds: [tx, sbp]}
+  tx_only:  {arrays: [i6v, M1, 55b, s6v], kinds: [tx]}
+  sbp_only: {arrays: [i6v, M1, 55b, s6v], kinds: [sbp]}
+
+conditions: [attempted, inner, perceived]
+# Coordinate systems for the subspace and scaling analyses:
+#   zscore: per-session z-scored TX/SBP features (electrode coordinates)
+#   mnn:    multivariate noise normalization (whitened by the pooled within-word noise covariance,
+#           Ledoit-Wolf; Walther et al. 2016) - the space LDA decodes in. Decoding is unaffected.
+spaces: [zscore, mnn]
+pairs: [[attempted, inner], [inner, attempted], [perceived, inner], [inner, perceived], [attempted, perceived], [perceived, attempted]]
+
+controls:
+  match_trials: true        # subsample every condition to the smallest trials-per-word count
+  n_match_reps: 10          # independent subsamples, results averaged
+  n_perm: 200               # shuffled-label nulls (decoding within-condition, subspace, scaling)
+  n_perm_cross: 1000        # cross-decoding null: fixed decoders, test labels permuted within blocks
+
+subspace:
+  k_max_avg: 6              # trial-averaged PCA: 7 word means span at most 6 dims
+  k_max_trial: 20           # single-trial PCA
+  k_report: 3               # k used for the summary tables / per-region figure
+  n_splits: 50              # random split-halves (cross-validated alignment)
+
+scaling:
+  ridge_alphas: [0.001, 0.01, 0.1, 1.0, 10.0, 100.0]   # x trace(K)/n, chosen by nested leave-one-word-out
+  sources: [attempted, perceived]    # predict inner word means from these
+  target: inner
+
+decoding:
+  classifiers: [lda, logreg]
+  folds: 10
+  logreg_C: 0.1             # median inner-CV choice for T15 in Phase 3 (results/phase3/selection_logreg.csv)
+  centering: [none, condition]   # condition = subtract each condition's own trial mean (label-free, uses the test condition's trials)

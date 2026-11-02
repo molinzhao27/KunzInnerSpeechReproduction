@@ -245,6 +245,13 @@ All intervals and per-participant gains: `results/phase3/model_comparison_cluste
 - **These are benchmark comparisons, not new methods** (see `docs/NOVELTY.md`). Whether the stronger decoders
   change the Phase 2 transfer conclusions is a natural follow-up that was not run.
 
+## Geometry of inner vs attempted speech (T15)
+
+A separate, CPU-only analysis in [`geometry/`](geometry/README.md) (`python geometry/run_all.py`).
+It compares subspaces, gain models and cross-condition decoding for T15's attempted, inner and
+perceived speech. The README there lists the T15 data available (conditions, trials, arrays, features);
+key numbers are in [`geometry/results.md`](geometry/results.md).
+
 ## Compute
 
 | Phase | Work | Where |
