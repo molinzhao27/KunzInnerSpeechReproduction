@@ -1,0 +1,11 @@
+session_key,session,behavior,bin_ms,n_trials,per_word_min,per_word_max,blocks,n_early,n_late
+isolated,T15 2024.04.07,attempted,10,140,20,20,12 19,70.0,70.0
+isolated,T15 2024.04.07,imagined1stAuditory,10,210,30,30,4 5 14,140.0,70.0
+isolated,T15 2024.04.07,imagined1stMotor,10,210,30,30,10 11 18,140.0,70.0
+isolated,T15 2024.04.07,imaginedListening,10,210,30,30,7 8 16,140.0,70.0
+isolated,T15 2024.04.07,listening,10,140,20,20,6 15,70.0,70.0
+isolated,T15 2024.04.07,mouthed,10,140,20,20,9 17,70.0,70.0
+isolated,T15 2024.04.07,reading,10,140,20,20,3 13,70.0,70.0
+interleaved,T15 2024.06.14,attempted,10,154,22,22,3 4 5 7 8,,
+interleaved,T15 2024.06.14,imaginedListening,10,308,44,44,3 4 5 7 8,,
+interleaved,T15 2024.06.14,listening,10,154,22,22,3 4 5 7 8,,

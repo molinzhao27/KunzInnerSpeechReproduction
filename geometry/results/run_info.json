@@ -1,0 +1,277 @@
+{
+ "seconds": 977.5,
+ "quick": false,
+ "python": "3.10.8",
+ "numpy": "1.24.0",
+ "sklearn": "1.7.2",
+ "machine": "x86_64",
+ "config": {
+  "seed": 42,
+  "participant": "T15",
+  "n_jobs": 12,
+  "paths": {
+   "raw": "data/raw",
+   "results": "geometry/results",
+   "cache": "geometry/cache"
+  },
+  "words": [
+   "ban",
+   "choice",
+   "day",
+   "feel",
+   "kite",
+   "though",
+   "were"
+  ],
+  "chance": 0.142857,
+  "preprocess": {
+   "smoothing_sigma_ms": 0,
+   "block_center": false
+  },
+  "window": {
+   "start_ms": 0,
+   "length_ms": 1500
+  },
+  "window_sweep": [
+   [
+    0,
+    500
+   ],
+   [
+    500,
+    500
+   ],
+   [
+    1000,
+    500
+   ],
+   [
+    0,
+    1000
+   ],
+   [
+    0,
+    1500
+   ],
+   [
+    500,
+    1000
+   ]
+  ],
+  "sessions": {
+   "isolated": {
+    "task": "isolatedVerbalBehaviors",
+    "file_tag": "allBehaviors",
+    "align": {
+     "default": "go",
+     "listening": "delay",
+     "reading": "delay"
+    },
+    "split_block": 12.5
+   },
+   "interleaved": {
+    "task": "interleavedVerbalBehaviors",
+    "file_tag": "interleavedVerbalBehaviors",
+    "align": {
+     "default": "go"
+    }
+   }
+  },
+  "runs": {
+   "main": {
+    "session": "isolated",
+    "attempted": "attempted",
+    "inner": "imagined1stMotor",
+    "perceived": "listening"
+   },
+   "inner_auditory": {
+    "session": "isolated",
+    "attempted": "attempted",
+    "inner": "imagined1stAuditory",
+    "perceived": "listening"
+   },
+   "inner_imaglisten": {
+    "session": "isolated",
+    "attempted": "attempted",
+    "inner": "imaginedListening",
+    "perceived": "listening"
+   },
+   "day2_interleaved": {
+    "session": "interleaved",
+    "attempted": "attempted",
+    "inner": "imaginedListening",
+    "perceived": "listening"
+   },
+   "early_blocks": {
+    "session": "isolated",
+    "attempted": "attempted",
+    "inner": "imagined1stMotor",
+    "perceived": "listening",
+    "blocks": "early"
+   },
+   "late_blocks": {
+    "session": "isolated",
+    "attempted": "attempted",
+    "inner": "imagined1stMotor",
+    "perceived": "listening",
+    "blocks": "late"
+   }
+  },
+  "regions": {
+   "all": {
+    "arrays": [
+     "i6v",
+     "M1",
+     "55b",
+     "s6v"
+    ],
+    "kinds": [
+     "tx",
+     "sbp"
+    ]
+   },
+   "i6v": {
+    "arrays": [
+     "i6v"
+    ],
+    "kinds": [
+     "tx",
+     "sbp"
+    ]
+   },
+   "M1": {
+    "arrays": [
+     "M1"
+    ],
+    "kinds": [
+     "tx",
+     "sbp"
+    ]
+   },
+   "55b": {
+    "arrays": [
+     "55b"
+    ],
+    "kinds": [
+     "tx",
+     "sbp"
+    ]
+   },
+   "s6v": {
+    "arrays": [
+     "s6v"
+    ],
+    "kinds": [
+     "tx",
+     "sbp"
+    ]
+   },
+   "6v": {
+    "arrays": [
+     "i6v",
+     "s6v"
+    ],
+    "kinds": [
+     "tx",
+     "sbp"
+    ]
+   },
+   "tx_only": {
+    "arrays": [
+     "i6v",
+     "M1",
+     "55b",
+     "s6v"
+    ],
+    "kinds": [
+     "tx"
+    ]
+   },
+   "sbp_only": {
+    "arrays": [
+     "i6v",
+     "M1",
+     "55b",
+     "s6v"
+    ],
+    "kinds": [
+     "sbp"
+    ]
+   }
+  },
+  "conditions": [
+   "attempted",
+   "inner",
+   "perceived"
+  ],
+  "spaces": [
+   "zscore",
+   "mnn"
+  ],
+  "pairs": [
+   [
+    "attempted",
+    "inner"
+   ],
+   [
+    "inner",
+    "attempted"
+   ],
+   [
+    "perceived",
+    "inner"
+   ],
+   [
+    "inner",
+    "perceived"
+   ],
+   [
+    "attempted",
+    "perceived"
+   ],
+   [
+    "perceived",
+    "attempted"
+   ]
+  ],
+  "controls": {
+   "match_trials": true,
+   "n_match_reps": 10,
+   "n_perm": 200,
+   "n_perm_cross": 1000
+  },
+  "subspace": {
+   "k_max_avg": 6,
+   "k_max_trial": 20,
+   "k_report": 3,
+   "n_splits": 50
+  },
+  "scaling": {
+   "ridge_alphas": [
+    0.001,
+    0.01,
+    0.1,
+    1.0,
+    10.0,
+    100.0
+   ],
+   "sources": [
+    "attempted",
+    "perceived"
+   ],
+   "target": "inner"
+  },
+  "decoding": {
+   "classifiers": [
+    "lda",
+    "logreg"
+   ],
+   "folds": 10,
+   "logreg_C": 0.1,
+   "centering": [
+    "none",
+    "condition"
+   ]
+  }
+ }
+}
